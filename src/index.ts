@@ -5,21 +5,22 @@ import { tmpdir } from "node:os";
 import { build } from "tsup";
 
 (async () => {
-  const dir = await mkdir(`temp/kysely-${Date.now()}`, {
+  const workDir = `temp/kysely-${Date.now()}`;
+  await mkdir(workDir, {
     recursive: true,
   });
-  await execSync(`git clone https://github.com/woltsu/tsynamo ${dir}`);
+  await execSync(`git clone https://github.com/woltsu/tsynamo ${workDir}`);
 
-  execSync(`cd "${dir}" && pnpm i`);
+  execSync(`cd "${workDir}" && pnpm i`);
 
   await mkdir("dist/main", { recursive: true });
   await build({
-    entry: [`${dir}/src/index.ts`],
+    entry: [`${workDir}/src/index.ts`],
     format: ["cjs", "esm"],
     minify: true,
     treeshake: true,
     dts: true,
-    tsconfig: `${dir}/tsconfig.json`,
+    tsconfig: `${workDir}/tsconfig.json`,
     sourcemap: false,
     // Include these packages to the bundle instead of expecting them to be importable from node_modules
     noExternal: ["@aws-sdk/client-dynamodb", "@aws-sdk/lib-dynamodb"],
